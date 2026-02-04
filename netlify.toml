@@ -1,0 +1,10 @@
+[build]
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
+
+[[redirects]]
+  from = "/pressure"
+  to = "/pressure.html"
+  status = 200

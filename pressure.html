@@ -1,0 +1,2569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PRESSURE by The Business End | Leadership Intelligence Platform</title>
+  <meta name="description" content="Analyse high-stakes business decisions by matching them against pressure moments and judgment calls from elite sport. Leadership intelligence where decisions are tested.">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Outfit:wght@200;300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap');
+    
+    :root {
+      --black: #000000;
+      --black-light: #0a0a0a;
+      --gold: #c9a227;
+      --gold-bright: #e3b93a;
+      --gold-dim: rgba(201, 162, 39, 0.4);
+      --gold-glow: rgba(201, 162, 39, 0.15);
+      --white: #f0ece4;
+      --white-soft: #d4d0c8;
+      --white-dim: #6a6862;
+      --border: rgba(201, 162, 39, 0.12);
+      --border-light: rgba(201, 162, 39, 0.06);
+      --danger: #c94a4a;
+      --success: #4ac978;
+      
+      --font-serif: 'Cormorant Garamond', Georgia, serif;
+      --font-sans: 'Outfit', -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      
+      --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    ::selection {
+      background: var(--gold);
+      color: var(--black);
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      font-weight: 300;
+      line-height: 1.7;
+      color: var(--white);
+      background: var(--black);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+    }
+
+    /* ========================================
+       AMBIENT BACKGROUND SYSTEM
+    ======================================== */
+    .ambient-bg {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    .ambient-grid {
+      position: absolute;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(201, 162, 39, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(201, 162, 39, 0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 80% 50% at 50% 50%, black 40%, transparent 100%);
+    }
+
+    .ambient-glow {
+      position: absolute;
+      width: 800px;
+      height: 800px;
+      background: radial-gradient(circle, var(--gold-glow) 0%, transparent 70%);
+      border-radius: 50%;
+      filter: blur(80px);
+      animation: ambientFloat 20s ease-in-out infinite;
+      opacity: 0.5;
+    }
+
+    .ambient-glow:nth-child(1) { top: -400px; left: -200px; }
+    .ambient-glow:nth-child(2) { bottom: -400px; right: -200px; animation-delay: -10s; }
+
+    @keyframes ambientFloat {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(50px, 30px) scale(1.1); }
+    }
+
+    .noise-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      pointer-events: none;
+      opacity: 0.015;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    }
+
+    /* ========================================
+       LAYOUT SYSTEM
+    ======================================== */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 clamp(24px, 5vw, 80px);
+    }
+
+    .container-narrow {
+      max-width: 800px;
+    }
+
+    section {
+      position: relative;
+      padding: clamp(80px, 12vh, 160px) 0;
+    }
+
+    /* ========================================
+       HEADER
+    ======================================== */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 24px 0;
+      transition: all 0.6s var(--ease-out-expo);
+    }
+
+    header.scrolled {
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    header .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo-mark {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      text-decoration: none;
+    }
+
+    .logo-symbol {
+      width: 44px;
+      height: 44px;
+      border: 1px solid var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-serif);
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--gold);
+      transition: all 0.3s ease;
+      letter-spacing: -0.05em;
+    }
+
+    .logo-mark:hover .logo-symbol {
+      background: var(--gold);
+      color: var(--black);
+    }
+
+    .logo-text-group {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .logo-title {
+      font-family: var(--font-serif);
+      font-size: 18px;
+      font-weight: 400;
+      color: var(--white);
+      letter-spacing: 0.1em;
+    }
+
+    .logo-subtitle {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 400;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--white-dim);
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 40px;
+    }
+
+    nav a {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 400;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--white-dim);
+      text-decoration: none;
+      position: relative;
+      padding: 4px 0;
+      transition: color 0.3s ease;
+    }
+
+    nav a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: var(--gold);
+      transition: width 0.3s var(--ease-out-expo);
+    }
+
+    nav a:hover { color: var(--white); }
+    nav a:hover::after { width: 100%; }
+    nav a.active { color: var(--gold); }
+    nav a.active::after { width: 100%; }
+
+    .nav-cta {
+      padding: 10px 20px;
+      border: 1px solid var(--gold-dim);
+      color: var(--gold) !important;
+      transition: all 0.3s ease;
+    }
+
+    .nav-cta::after { display: none; }
+    .nav-cta:hover {
+      background: var(--gold);
+      color: var(--black) !important;
+      border-color: var(--gold);
+    }
+
+    @media (max-width: 900px) {
+      nav { display: none; }
+    }
+
+    /* ========================================
+       TYPOGRAPHY
+    ======================================== */
+    .label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .label::before {
+      content: '';
+      width: 24px;
+      height: 1px;
+      background: var(--gold-dim);
+    }
+
+    h1, h2, h3, h4 {
+      font-family: var(--font-serif);
+      font-weight: 400;
+      color: var(--white);
+      letter-spacing: -0.02em;
+    }
+
+    h1 {
+      font-size: clamp(42px, 8vw, 88px);
+      line-height: 1.05;
+      font-weight: 300;
+    }
+
+    h2 {
+      font-size: clamp(32px, 5vw, 52px);
+      line-height: 1.15;
+    }
+
+    h3 {
+      font-size: clamp(22px, 3vw, 28px);
+      line-height: 1.3;
+    }
+
+    h4 {
+      font-size: 18px;
+      line-height: 1.4;
+      font-family: var(--font-sans);
+      font-weight: 500;
+    }
+
+    p {
+      color: var(--white-dim);
+      max-width: 600px;
+    }
+
+    .text-gold { color: var(--gold); }
+    .text-white { color: var(--white); }
+
+    /* ========================================
+       HERO SECTION
+    ======================================== */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 780px;
+    }
+
+    .hero-overline {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 32px;
+      opacity: 0;
+      animation: fadeSlideUp 1s var(--ease-out-expo) 0.3s forwards;
+    }
+
+    .hero h1 {
+      opacity: 0;
+      animation: fadeSlideUp 1s var(--ease-out-expo) 0.5s forwards;
+    }
+
+    .hero h1 em {
+      font-style: normal;
+      color: var(--gold);
+      position: relative;
+    }
+
+    .hero-sub {
+      font-size: clamp(18px, 2.5vw, 22px);
+      font-weight: 300;
+      color: var(--white-soft);
+      margin-top: 32px;
+      max-width: 580px;
+      opacity: 0;
+      animation: fadeSlideUp 1s var(--ease-out-expo) 0.7s forwards;
+    }
+
+    .hero-actions {
+      margin-top: 56px;
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeSlideUp 1s var(--ease-out-expo) 0.9s forwards;
+    }
+
+    @keyframes fadeSlideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Data stream decoration */
+    .hero-data-stream {
+      position: absolute;
+      right: 5%;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 300px;
+      height: 400px;
+      opacity: 0;
+      animation: fadeIn 2s ease 1.5s forwards;
+    }
+
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+
+    .data-line {
+      position: absolute;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--gold-dim);
+      white-space: nowrap;
+      animation: dataScroll 20s linear infinite;
+    }
+
+    .data-line:nth-child(1) { top: 0; animation-delay: 0s; }
+    .data-line:nth-child(2) { top: 40px; animation-delay: -5s; opacity: 0.6; }
+    .data-line:nth-child(3) { top: 80px; animation-delay: -10s; opacity: 0.4; }
+    .data-line:nth-child(4) { top: 120px; animation-delay: -15s; opacity: 0.3; }
+    .data-line:nth-child(5) { top: 160px; animation-delay: -3s; opacity: 0.5; }
+    .data-line:nth-child(6) { top: 200px; animation-delay: -8s; opacity: 0.35; }
+    .data-line:nth-child(7) { top: 240px; animation-delay: -12s; opacity: 0.25; }
+
+    @keyframes dataScroll {
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-200%); }
+    }
+
+    @media (max-width: 1200px) {
+      .hero-data-stream { display: none; }
+    }
+
+    /* ========================================
+       BUTTONS
+    ======================================== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 16px 32px;
+      border: 1px solid var(--gold);
+      background: transparent;
+      color: var(--gold);
+      cursor: pointer;
+      transition: all 0.4s var(--ease-out-expo);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--gold);
+      transform: translateX(-101%);
+      transition: transform 0.4s var(--ease-out-expo);
+    }
+
+    .btn span {
+      position: relative;
+      z-index: 1;
+    }
+
+    .btn:hover::before {
+      transform: translateX(0);
+    }
+
+    .btn:hover {
+      color: var(--black);
+    }
+
+    .btn-ghost {
+      border-color: var(--border);
+      color: var(--white-dim);
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--white);
+      color: var(--black);
+    }
+
+    .btn-ghost::before {
+      background: var(--white);
+    }
+
+    .btn-full {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn:disabled:hover::before {
+      transform: translateX(-101%);
+    }
+
+    /* ========================================
+       SECTION DIVIDER
+    ======================================== */
+    .section-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+      margin: 0;
+    }
+
+    /* ========================================
+       DECISION INPUT SECTION
+    ======================================== */
+    .decision-section {
+      background: linear-gradient(180deg, var(--black) 0%, var(--black-light) 50%, var(--black) 100%);
+    }
+
+    .decision-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+
+    @media (max-width: 900px) {
+      .decision-grid { 
+        grid-template-columns: 1fr; 
+        gap: 48px;
+      }
+    }
+
+    .decision-intro h2 {
+      margin-bottom: 24px;
+    }
+
+    .decision-intro p {
+      font-size: 17px;
+      margin-bottom: 32px;
+    }
+
+    .decision-form {
+      background: var(--black);
+      border: 1px solid var(--border);
+      padding: 48px;
+      position: relative;
+    }
+
+    .decision-form::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--gold), var(--gold-dim));
+    }
+
+    .form-group {
+      margin-bottom: 32px;
+    }
+
+    .form-group:last-of-type {
+      margin-bottom: 40px;
+    }
+
+    .form-label {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 12px;
+    }
+
+    .form-input,
+    .form-textarea,
+    .form-select {
+      width: 100%;
+      background: var(--black-light);
+      border: 1px solid var(--border);
+      padding: 16px 20px;
+      font-family: var(--font-sans);
+      font-size: 15px;
+      font-weight: 300;
+      color: var(--white);
+      transition: all 0.3s ease;
+    }
+
+    .form-input:focus,
+    .form-textarea:focus,
+    .form-select:focus {
+      outline: none;
+      border-color: var(--gold-dim);
+      background: rgba(201, 162, 39, 0.03);
+    }
+
+    .form-textarea {
+      min-height: 120px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+
+    .form-select {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23c9a227' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      padding-right: 48px;
+    }
+
+    .form-select option {
+      background: var(--black);
+      color: var(--white);
+    }
+
+    .stake-indicators {
+      display: flex;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .stake-btn {
+      flex: 1;
+      padding: 12px 16px;
+      background: transparent;
+      border: 1px solid var(--border);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--white-dim);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .stake-btn:hover {
+      border-color: var(--gold-dim);
+      color: var(--white);
+    }
+
+    .stake-btn.active {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: var(--black);
+    }
+
+    /* ========================================
+       ANALYSIS RESULTS
+    ======================================== */
+    .analysis-section {
+      display: none;
+    }
+
+    .analysis-section.active {
+      display: block;
+    }
+
+    .analysis-header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 48px;
+      align-items: start;
+      margin-bottom: 64px;
+    }
+
+    @media (max-width: 768px) {
+      .analysis-header {
+        grid-template-columns: 1fr;
+        gap: 32px;
+      }
+    }
+
+    .call-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 32px;
+      border: 2px solid var(--gold);
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    .call-badge.do {
+      color: var(--success);
+      border-color: var(--success);
+    }
+
+    .call-badge.dont {
+      color: var(--danger);
+      border-color: var(--danger);
+    }
+
+    .call-badge.delay {
+      color: var(--gold);
+      border-color: var(--gold);
+    }
+
+    .analysis-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 32px;
+    }
+
+    @media (max-width: 900px) {
+      .analysis-grid { grid-template-columns: 1fr; }
+    }
+
+    .analysis-card {
+      background: linear-gradient(135deg, rgba(201, 162, 39, 0.03) 0%, transparent 100%);
+      border: 1px solid var(--border);
+      padding: 40px;
+      transition: all 0.4s var(--ease-out-expo);
+    }
+
+    .analysis-card:hover {
+      border-color: var(--gold-dim);
+    }
+
+    .analysis-card-icon {
+      width: 48px;
+      height: 48px;
+      border: 1px solid var(--gold-dim);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+    }
+
+    .analysis-card-icon svg {
+      width: 20px;
+      height: 20px;
+      stroke: var(--gold);
+      fill: none;
+      stroke-width: 1.5;
+    }
+
+    .analysis-card h4 {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 16px;
+    }
+
+    .analysis-card p {
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--white-soft);
+    }
+
+    .analysis-card.full-width {
+      grid-column: 1 / -1;
+    }
+
+    /* Pattern match card */
+    .pattern-match-card {
+      background: var(--black);
+      border: 1px solid var(--gold-dim);
+    }
+
+    .pattern-match-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 24px;
+    }
+
+    .match-score {
+      font-family: var(--font-serif);
+      font-size: 48px;
+      font-weight: 300;
+      color: var(--gold);
+      line-height: 1;
+    }
+
+    .match-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--white-dim);
+      margin-top: 8px;
+    }
+
+    .leader-info h3 {
+      font-size: 22px;
+      margin-bottom: 4px;
+    }
+
+    .leader-role {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--gold);
+      letter-spacing: 0.1em;
+    }
+
+    .pattern-quote {
+      border-left: 2px solid var(--gold-dim);
+      padding-left: 20px;
+      margin: 24px 0;
+    }
+
+    .pattern-quote p {
+      font-style: italic;
+      color: var(--white-soft);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    /* Bias warning */
+    .bias-warning {
+      background: rgba(201, 74, 74, 0.1);
+      border: 1px solid rgba(201, 74, 74, 0.3);
+      padding: 24px;
+      display: flex;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .bias-icon {
+      width: 24px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+
+    .bias-icon svg {
+      stroke: var(--danger);
+      fill: none;
+      stroke-width: 1.5;
+    }
+
+    .bias-content h4 {
+      color: var(--danger);
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+
+    .bias-content p {
+      font-size: 14px;
+      color: var(--white-dim);
+    }
+
+    /* ========================================
+       COMPARISON DASHBOARD
+    ======================================== */
+    .dashboard-section {
+      background: var(--black-light);
+    }
+
+    .dashboard-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      margin-bottom: 64px;
+    }
+
+    @media (max-width: 900px) {
+      .dashboard-stats { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 500px) {
+      .dashboard-stats { grid-template-columns: 1fr; }
+    }
+
+    .stat-card {
+      background: var(--black);
+      border: 1px solid var(--border);
+      padding: 32px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+      border-color: var(--gold-dim);
+    }
+
+    .stat-number {
+      font-family: var(--font-serif);
+      font-size: 48px;
+      font-weight: 300;
+      color: var(--gold);
+      line-height: 1;
+      margin-bottom: 12px;
+    }
+
+    .stat-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--white-dim);
+    }
+
+    /* Pressure distribution */
+    .pressure-chart {
+      background: var(--black);
+      border: 1px solid var(--border);
+      padding: 48px;
+      margin-bottom: 48px;
+    }
+
+    .pressure-chart h3 {
+      font-size: 20px;
+      margin-bottom: 32px;
+    }
+
+    .pressure-bars {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .pressure-bar-item {
+      display: grid;
+      grid-template-columns: 120px 1fr 60px;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .pressure-bar-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--white-dim);
+    }
+
+    .pressure-bar-track {
+      height: 8px;
+      background: var(--border);
+      position: relative;
+    }
+
+    .pressure-bar-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold), var(--gold-bright));
+      transition: width 1s var(--ease-out-expo);
+    }
+
+    .pressure-bar-value {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--gold);
+      text-align: right;
+    }
+
+    /* Decision history */
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .history-item {
+      background: var(--black);
+      border: 1px solid var(--border);
+      padding: 24px 32px;
+      display: grid;
+      grid-template-columns: 1fr auto auto auto;
+      gap: 32px;
+      align-items: center;
+      transition: all 0.3s ease;
+    }
+
+    .history-item:hover {
+      border-color: var(--gold-dim);
+    }
+
+    .history-decision {
+      font-size: 15px;
+      color: var(--white-soft);
+    }
+
+    .history-stake {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+    }
+
+    .history-stake.high {
+      border-color: var(--danger);
+      color: var(--danger);
+    }
+
+    .history-stake.medium {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    .history-stake.low {
+      border-color: var(--success);
+      color: var(--success);
+    }
+
+    .history-call {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .history-call.do { color: var(--success); }
+    .history-call.dont { color: var(--danger); }
+    .history-call.delay { color: var(--gold); }
+
+    .history-delete {
+      background: none;
+      border: none;
+      color: var(--white-dim);
+      cursor: pointer;
+      padding: 8px;
+      transition: color 0.3s ease;
+    }
+
+    .history-delete:hover {
+      color: var(--danger);
+    }
+
+    @media (max-width: 768px) {
+      .history-item {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+    }
+
+    /* ========================================
+       PODCAST DATABASE
+    ======================================== */
+    .podcast-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 48px;
+    }
+
+    @media (max-width: 900px) {
+      .podcast-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 600px) {
+      .podcast-grid { grid-template-columns: 1fr; }
+    }
+
+    .podcast-card {
+      background: var(--black);
+      border: 1px solid var(--border);
+      padding: 32px;
+      transition: all 0.4s var(--ease-out-expo);
+      cursor: pointer;
+    }
+
+    .podcast-card:hover {
+      border-color: var(--gold-dim);
+      transform: translateY(-4px);
+    }
+
+    .podcast-guest {
+      font-family: var(--font-serif);
+      font-size: 22px;
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+
+    .podcast-role {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 16px;
+    }
+
+    .podcast-title {
+      font-size: 14px;
+      color: var(--white-dim);
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    .podcast-moments {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--white-dim);
+      letter-spacing: 0.1em;
+    }
+
+    .podcast-moments span {
+      color: var(--gold);
+    }
+
+    .podcast-episode {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--white-dim);
+      margin-bottom: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .podcast-insight {
+      font-family: var(--font-serif);
+      font-size: 13px;
+      font-style: italic;
+      color: var(--white-soft);
+      line-height: 1.6;
+      margin-bottom: 20px;
+      padding: 16px;
+      background: rgba(201, 162, 39, 0.03);
+      border-left: 2px solid var(--gold-dim);
+    }
+
+    /* ========================================
+       METHODOLOGY SECTION
+    ======================================== */
+    .methodology-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 2px;
+      background: var(--border);
+      margin-top: 64px;
+    }
+
+    @media (max-width: 900px) {
+      .methodology-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    @media (max-width: 600px) {
+      .methodology-grid { grid-template-columns: 1fr; }
+    }
+
+    .methodology-step {
+      background: var(--black);
+      padding: 40px 32px;
+      text-align: center;
+      transition: all 0.4s var(--ease-out-expo);
+    }
+
+    .methodology-step:hover {
+      background: var(--black-light);
+    }
+
+    .methodology-number {
+      font-family: var(--font-serif);
+      font-size: 36px;
+      font-weight: 300;
+      color: var(--gold);
+      margin-bottom: 16px;
+    }
+
+    .methodology-step h4 {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--white);
+      margin-bottom: 12px;
+    }
+
+    .methodology-step p {
+      font-size: 13px;
+      color: var(--white-dim);
+      line-height: 1.6;
+      margin: 0 auto;
+    }
+
+    /* ========================================
+       FOOTER
+    ======================================== */
+    footer {
+      padding: 80px 0 40px;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 64px;
+      margin-bottom: 64px;
+    }
+
+    @media (max-width: 900px) {
+      .footer-grid { 
+        grid-template-columns: 1fr 1fr;
+        gap: 48px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .footer-grid { grid-template-columns: 1fr; }
+    }
+
+    .footer-brand p {
+      margin-top: 24px;
+      font-size: 14px;
+      max-width: 280px;
+    }
+
+    .footer-links h4 {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 24px;
+    }
+
+    .footer-links ul {
+      list-style: none;
+    }
+
+    .footer-links li {
+      margin-bottom: 12px;
+    }
+
+    .footer-links a {
+      font-size: 14px;
+      color: var(--white-dim);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .footer-links a:hover {
+      color: var(--white);
+    }
+
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 40px;
+      border-top: 1px solid var(--border-light);
+    }
+
+    .footer-copy {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--white-dim);
+      letter-spacing: 0.05em;
+    }
+
+    /* ========================================
+       EMAIL CAPTURE MODAL
+    ======================================== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.9);
+      backdrop-filter: blur(10px);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.4s var(--ease-out-expo);
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal {
+      background: var(--black);
+      border: 1px solid var(--gold-dim);
+      padding: 64px;
+      max-width: 500px;
+      width: 90%;
+      position: relative;
+      transform: translateY(20px);
+      transition: transform 0.4s var(--ease-out-expo);
+    }
+
+    .modal-overlay.active .modal {
+      transform: translateY(0);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      background: none;
+      border: none;
+      color: var(--white-dim);
+      cursor: pointer;
+      padding: 8px;
+      transition: color 0.3s ease;
+    }
+
+    .modal-close:hover {
+      color: var(--white);
+    }
+
+    .modal h3 {
+      font-size: 28px;
+      margin-bottom: 16px;
+    }
+
+    .modal p {
+      margin-bottom: 32px;
+    }
+
+    .modal .form-group {
+      margin-bottom: 24px;
+    }
+
+    /* ========================================
+       LOADING STATE
+    ======================================== */
+    .loading-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.95);
+      z-index: 150;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.4s ease;
+    }
+
+    .loading-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .loading-spinner {
+      width: 60px;
+      height: 60px;
+      border: 2px solid var(--border);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 24px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    /* ========================================
+       SCREEN TABS
+    ======================================== */
+    .screen {
+      display: none;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    /* ========================================
+       UTILITIES
+    ======================================== */
+    .mt-64 { margin-top: 64px; }
+    .mb-32 { margin-bottom: 32px; }
+    .text-center { text-align: center; }
+  </style>
+</head>
+<body>
+  <!-- Ambient Background -->
+  <div class="ambient-bg">
+    <div class="ambient-grid"></div>
+    <div class="ambient-glow"></div>
+    <div class="ambient-glow"></div>
+  </div>
+  <div class="noise-overlay"></div>
+
+  <!-- Header -->
+  <header id="header">
+    <div class="container">
+      <a href="index.html" class="logo-mark">
+        <div class="logo-symbol">P</div>
+        <div class="logo-text-group">
+          <span class="logo-title">PRESSURE</span>
+          <span class="logo-subtitle">by The Business End</span>
+        </div>
+      </a>
+      <nav>
+        <a href="index.html" style="opacity: 0.7;">← Main Site</a>
+        <a href="#" onclick="showScreen('home'); return false;" class="active" data-nav="home">Analyse</a>
+        <a href="#" onclick="showScreen('dashboard'); return false;" data-nav="dashboard">Dashboard</a>
+        <a href="#" onclick="showScreen('database'); return false;" data-nav="database">Judgment Calls</a>
+        <a href="#" onclick="showScreen('methodology'); return false;" data-nav="methodology">Methodology</a>
+        <a href="#" class="nav-cta" onclick="openEmailModal(); return false;">Get Report</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">Analysing pressure patterns...</div>
+  </div>
+
+  <!-- Email Capture Modal -->
+  <div class="modal-overlay" id="emailModal">
+    <div class="modal">
+      <button class="modal-close" onclick="closeEmailModal()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M18 6L6 18M6 6l12 12"/>
+        </svg>
+      </button>
+      <div class="label">Intelligence Report</div>
+      <h3>Unlock Your Full Analysis</h3>
+      <p>Receive a comprehensive PDF report with detailed pressure pattern analysis, personalised recommendations, and elite sport comparisons.</p>
+      <form id="emailForm" action="https://formspree.io/f/mwvqdzoj" method="POST" onsubmit="handleEmailSubmit(event)">
+        <input type="hidden" name="_subject" value="New PRESSURE Report Request">
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input type="email" name="email" class="form-input" placeholder="your@email.com" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Name</label>
+          <input type="text" name="name" class="form-input" placeholder="Your name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Role / Title</label>
+          <input type="text" name="role" class="form-input" placeholder="e.g. CEO, Managing Director">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Company</label>
+          <input type="text" name="company" class="form-input" placeholder="Your company">
+        </div>
+        <button type="submit" class="btn btn-full"><span>Send My Report</span></button>
+      </form>
+    </div>
+  </div>
+
+  <!-- HOME SCREEN -->
+  <div class="screen active" id="screen-home">
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="container">
+        <div class="hero-content">
+          <div class="hero-overline">Pressure by The Business End</div>
+          <h1>Judgment Calls Under <em>Pressure</em></h1>
+          <p class="hero-sub">Analyse high-stakes business decisions by matching them against judgment calls from elite sport leaders. Not motivation. Pure signal.</p>
+          <div class="hero-actions">
+            <a href="#decision-input" class="btn"><span>Analyse a Decision</span></a>
+            <a href="#" class="btn btn-ghost" onclick="showScreen('methodology'); return false;"><span>How It Works</span></a>
+          </div>
+        </div>
+        <div class="hero-data-stream">
+          <div class="data-line">JUDGMENT_CALL::PRESSURE_SIGNAL=HIGH</div>
+          <div class="data-line">PATTERN_MATCH::RICHARDS_LEICESTER::87%</div>
+          <div class="data-line">BIAS_CHECK::SUNK_COST=DETECTED</div>
+          <div class="data-line">SYSTEM_RISK::REPUTATION_EXPOSURE</div>
+          <div class="data-line">CALL::DELAY::CONFIDENCE=0.91</div>
+          <div class="data-line">ELITE_TEST::STRESS_VALIDATED</div>
+          <div class="data-line">ACTION::NON_NEGOTIABLE_STEPS[3]</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- Decision Input Section -->
+    <section class="decision-section" id="decision-input">
+      <div class="container">
+        <div class="decision-grid">
+          <div class="decision-intro">
+            <div class="label">Decision Analysis</div>
+            <h2>What decision is keeping you awake?</h2>
+            <p>Describe the decision you're facing. The more context you provide, the more precise the pattern matching will be. We'll analyse it against 120+ judgment calls from elite sport leaders.</p>
+            
+            <div class="methodology-grid" style="margin-top: 48px; grid-template-columns: 1fr;">
+              <div class="methodology-step" style="text-align: left; padding: 24px;">
+                <h4 style="color: var(--gold); margin-bottom: 16px;">What You'll Receive</h4>
+                <ul style="list-style: none; font-size: 14px; color: var(--white-dim);">
+                  <li style="padding: 8px 0; border-bottom: 1px solid var(--border-light); display: flex; gap: 12px;"><span style="color: var(--gold);">→</span> Pressure signal identification</li>
+                  <li style="padding: 8px 0; border-bottom: 1px solid var(--border-light); display: flex; gap: 12px;"><span style="color: var(--gold);">→</span> Elite sport pattern match</li>
+                  <li style="padding: 8px 0; border-bottom: 1px solid var(--border-light); display: flex; gap: 12px;"><span style="color: var(--gold);">→</span> Clear DO / DON'T / DELAY call</li>
+                  <li style="padding: 8px 0; border-bottom: 1px solid var(--border-light); display: flex; gap: 12px;"><span style="color: var(--gold);">→</span> Bias trap identification</li>
+                  <li style="padding: 8px 0; display: flex; gap: 12px;"><span style="color: var(--gold);">→</span> Non-negotiable next steps</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="decision-form">
+            <form id="decisionForm" onsubmit="handleDecisionSubmit(event)">
+              <div class="form-group">
+                <label class="form-label">Describe Your Decision</label>
+                <textarea class="form-textarea" id="decisionText" placeholder="e.g. I'm considering whether to fire my co-founder. We've been together since the start, but they're no longer performing and the team is suffering. The board is asking questions." required></textarea>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Stake Level</label>
+                <div class="stake-indicators">
+                  <button type="button" class="stake-btn" data-stake="low" onclick="setStake('low')">Low</button>
+                  <button type="button" class="stake-btn active" data-stake="medium" onclick="setStake('medium')">Medium</button>
+                  <button type="button" class="stake-btn" data-stake="high" onclick="setStake('high')">High</button>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Time Pressure</label>
+                <input type="text" class="form-input" id="timePressure" placeholder="e.g. Board meeting in 2 weeks, need to decide before Q3">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Reputational Pressure</label>
+                <input type="text" class="form-input" id="repPressure" placeholder="e.g. This person is well-liked by the team and investors">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Additional Context</label>
+                <textarea class="form-textarea" id="contextText" placeholder="Any other constraints, stakeholders, or factors that affect this decision..." style="min-height: 80px;"></textarea>
+              </div>
+
+              <button type="submit" class="btn btn-full"><span>Analyse This Decision</span></button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Analysis Results (Hidden initially) -->
+    <section class="analysis-section" id="analysisResults">
+      <div class="container">
+        <div class="analysis-header">
+          <div>
+            <div class="label">Analysis Complete</div>
+            <h2 id="analysisTitle">Your Decision Analysis</h2>
+          </div>
+          <div class="call-badge delay" id="callBadge">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M12 6v6l4 2"/>
+            </svg>
+            <span id="callText">DELAY</span>
+          </div>
+        </div>
+
+        <div class="analysis-grid">
+          <!-- Signal Card -->
+          <div class="analysis-card">
+            <div class="analysis-card-icon">
+              <svg viewBox="0 0 24 24">
+                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+              </svg>
+            </div>
+            <h4>Pressure Signal</h4>
+            <p id="signalText">Multiple pressure types detected: time constraint (board deadline), reputation exposure (co-founder relationship), and stakeholder complexity (team morale). This combination typically degrades decision quality by 40%.</p>
+          </div>
+
+          <!-- Risk Card -->
+          <div class="analysis-card">
+            <div class="analysis-card-icon">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+              </svg>
+            </div>
+            <h4>System Risk</h4>
+            <p id="riskText">Hidden cost: delayed action correlates with team performance degradation of 15-25% over 6 months. The longer the known issue persists, the more institutional trust erodes.</p>
+          </div>
+
+          <!-- Pattern Match Card -->
+          <div class="analysis-card pattern-match-card full-width">
+            <div class="pattern-match-header">
+              <div class="leader-info">
+                <h3 id="matchLeader">Sir Alex Ferguson</h3>
+                <div class="leader-role" id="matchRole">Manchester United Manager</div>
+              </div>
+              <div>
+                <div class="match-score" id="matchScore">87%</div>
+                <div class="match-label">Pattern Match</div>
+              </div>
+            </div>
+            <div class="pattern-quote">
+              <p id="matchQuote">"The hardest decisions in management are about people you've been in the trenches with. But the moment you know, you know. Every day of delay costs you something you can't get back—the team's belief that standards are real."</p>
+            </div>
+            <p id="matchContext">Ferguson's handling of senior player departures—including Roy Keane and David Beckham—demonstrates that reputation-based hesitation often exceeds the actual cost of decisive action.</p>
+          </div>
+
+          <!-- Action Card -->
+          <div class="analysis-card">
+            <div class="analysis-card-icon">
+              <svg viewBox="0 0 24 24">
+                <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+              </svg>
+            </div>
+            <h4>Non-Negotiable Actions</h4>
+            <p id="actionText">1. Document performance concerns objectively within 48 hours. 2. Have direct conversation with co-founder before any board discussion. 3. Prepare transition narrative for team communication.</p>
+          </div>
+
+          <!-- Bias Warning -->
+          <div class="analysis-card">
+            <div class="bias-warning">
+              <div class="bias-icon">
+                <svg viewBox="0 0 24 24">
+                  <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                </svg>
+              </div>
+              <div class="bias-content">
+                <h4>BIAS DETECTED: SUNK COST</h4>
+                <p id="biasText">Your shared history with this person is influencing the decision timeline. The investment of years together is creating an emotional anchor that has no bearing on future performance potential.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-center mt-64">
+          <button class="btn" onclick="downloadPDF()"><span>Download PDF Report</span></button>
+          <button class="btn btn-ghost" onclick="resetAnalysis()" style="margin-left: 16px;"><span>Analyse Another Decision</span></button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- DASHBOARD SCREEN -->
+  <div class="screen" id="screen-dashboard">
+    <section class="dashboard-section" style="padding-top: 160px;">
+      <div class="container">
+        <div class="label">Comparison Dashboard</div>
+        <h2 style="margin-bottom: 48px;">Your Decision Patterns</h2>
+
+        <div class="dashboard-stats">
+          <div class="stat-card">
+            <div class="stat-number" id="totalDecisions">0</div>
+            <div class="stat-label">Decisions Analysed</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="avgMatch">0%</div>
+            <div class="stat-label">Avg Pattern Match</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="topLeader">—</div>
+            <div class="stat-label">Most Matched Leader</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="dominantPressure">—</div>
+            <div class="stat-label">Dominant Pressure Type</div>
+          </div>
+        </div>
+
+        <div class="pressure-chart">
+          <h3>Pressure Type Distribution</h3>
+          <div class="pressure-bars">
+            <div class="pressure-bar-item">
+              <div class="pressure-bar-label">Time</div>
+              <div class="pressure-bar-track">
+                <div class="pressure-bar-fill" id="bar-time" style="width: 0%"></div>
+              </div>
+              <div class="pressure-bar-value" id="val-time">0%</div>
+            </div>
+            <div class="pressure-bar-item">
+              <div class="pressure-bar-label">Reputation</div>
+              <div class="pressure-bar-track">
+                <div class="pressure-bar-fill" id="bar-reputation" style="width: 0%"></div>
+              </div>
+              <div class="pressure-bar-value" id="val-reputation">0%</div>
+            </div>
+            <div class="pressure-bar-item">
+              <div class="pressure-bar-label">Stakeholder</div>
+              <div class="pressure-bar-track">
+                <div class="pressure-bar-fill" id="bar-stakeholder" style="width: 0%"></div>
+              </div>
+              <div class="pressure-bar-value" id="val-stakeholder">0%</div>
+            </div>
+            <div class="pressure-bar-item">
+              <div class="pressure-bar-label">Resource</div>
+              <div class="pressure-bar-track">
+                <div class="pressure-bar-fill" id="bar-resource" style="width: 0%"></div>
+              </div>
+              <div class="pressure-bar-value" id="val-resource">0%</div>
+            </div>
+          </div>
+        </div>
+
+        <h3 style="margin-bottom: 24px;">Decision History</h3>
+        <div class="history-list" id="historyList">
+          <div class="history-item" style="justify-content: center; color: var(--white-dim);">
+            No decisions analysed yet. <a href="#" onclick="showScreen('home'); return false;" style="color: var(--gold); margin-left: 8px;">Analyse your first decision →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- DATABASE SCREEN -->
+  <div class="screen" id="screen-database">
+    <section style="padding-top: 160px;">
+      <div class="container">
+        <div class="label">Judgment Calls Archive</div>
+        <h2 style="margin-bottom: 16px;">Pressure Moments & Judgment Calls</h2>
+        <p style="margin-bottom: 48px;">120+ judgment calls extracted from 27 episodes of The Business End podcast featuring elite sport leaders, coaches, and business executives. Each moment has been analysed for pressure profile, leadership traits, and business translation.</p>
+
+        <div class="podcast-grid" id="podcastGrid">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- METHODOLOGY SCREEN -->
+  <div class="screen" id="screen-methodology">
+    <section style="padding-top: 160px;">
+      <div class="container">
+        <div class="label">How It Works</div>
+        <h2 style="margin-bottom: 16px;">Decision Quality Analyst Framework</h2>
+        <p style="margin-bottom: 0;">A 5-part analysis system that translates lessons from elite sport into actionable business intelligence. Not motivational content—pure analytical signal.</p>
+
+        <div class="methodology-grid">
+          <div class="methodology-step">
+            <div class="methodology-number">01</div>
+            <h4>Pressure Signal</h4>
+            <p>Identifies the type of pressure: time, reputation, stakeholder, or resource constraints.</p>
+          </div>
+          <div class="methodology-step">
+            <div class="methodology-number">02</div>
+            <h4>Standards Check</h4>
+            <p>Evaluates if the decision maintains quality standards under pressure.</p>
+          </div>
+          <div class="methodology-step">
+            <div class="methodology-number">03</div>
+            <h4>Pattern Match</h4>
+            <p>Finds comparable moments from elite sport leaders in the database.</p>
+          </div>
+          <div class="methodology-step">
+            <div class="methodology-number">04</div>
+            <h4>System Risk</h4>
+            <p>Assesses hidden organisational vulnerabilities and degradation patterns.</p>
+          </div>
+          <div class="methodology-step">
+            <div class="methodology-number">05</div>
+            <h4>Elite Sport Test</h4>
+            <p>Applies stress-tested principles from high-performance environments.</p>
+          </div>
+        </div>
+
+        <div style="margin-top: 80px; padding: 48px; border: 1px solid var(--border); background: var(--black);">
+          <h3 style="margin-bottom: 24px;">Output Format</h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 32px;">
+            <div>
+              <h4 style="color: var(--gold); font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.15em; margin-bottom: 8px;">SIGNAL</h4>
+              <p style="font-size: 14px;">What the pressure pattern reveals</p>
+            </div>
+            <div>
+              <h4 style="color: var(--gold); font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.15em; margin-bottom: 8px;">RISK</h4>
+              <p style="font-size: 14px;">What could degrade silently</p>
+            </div>
+            <div>
+              <h4 style="color: var(--gold); font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.15em; margin-bottom: 8px;">CALL</h4>
+              <p style="font-size: 14px;">Clear DO / DON'T / DELAY recommendation</p>
+            </div>
+            <div>
+              <h4 style="color: var(--gold); font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.15em; margin-bottom: 8px;">ACTION</h4>
+              <p style="font-size: 14px;">Non-negotiable next steps</p>
+            </div>
+            <div>
+              <h4 style="color: var(--gold); font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.15em; margin-bottom: 8px;">BIAS</h4>
+              <p style="font-size: 14px;">Ego, sunk cost, reputation, or avoidance traps</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="#" class="logo-mark" onclick="showScreen('home'); return false;">
+            <div class="logo-symbol">P</div>
+            <div class="logo-text-group">
+              <span class="logo-title">PRESSURE</span>
+              <span class="logo-subtitle">by The Business End</span>
+            </div>
+          </a>
+          <p>Leadership intelligence where judgment calls are tested, consequences are real, and standards never drop.</p>
+        </div>
+        <div class="footer-links">
+          <h4>Platform</h4>
+          <ul>
+            <li><a href="#" onclick="showScreen('home'); return false;">Analyse Decision</a></li>
+            <li><a href="#" onclick="showScreen('dashboard'); return false;">Dashboard</a></li>
+            <li><a href="#" onclick="showScreen('database'); return false;">Judgment Calls</a></li>
+            <li><a href="#" onclick="showScreen('methodology'); return false;">Methodology</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>The Business End</h4>
+          <ul>
+            <li><a href="#">Podcast</a></li>
+            <li><a href="#">Judgment Calls Reports</a></li>
+            <li><a href="#">Executive Sessions</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-copy">© 2026 The Business End. All rights reserved. · <a href="https://business-end.com" style="color: var(--gold);">business-end.com</a></div>
+        <div class="footer-copy">British English. Always.</div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // ========================================
+    // PODCAST DATABASE
+    // ========================================
+    const podcastDatabase = [
+      {
+        guest: "Justin Fitzpatrick",
+        role: "Ireland & Ulster Rugby, European Cup Winner",
+        title: "Growth Mindset, Resilience & Adaptability",
+        episode: 1,
+        moments: 4,
+        keyInsight: "Being resilient means processing feedback—positive or negative—and either learning from it or discarding it. The mind is such a powerful tool; if you allow doubt or uncertainty, it can quickly be your undoing."
+      },
+      {
+        guest: "Tony Underwood",
+        role: "England Rugby & British Lions",
+        title: "Fierce Care & High Performance Environments",
+        episode: 2,
+        moments: 5,
+        keyInsight: "High performance is about creating an environment where we respond in the most effective way possible and make the best decisions when under pressure. People miss that—they go to challenge before providing care."
+      },
+      {
+        guest: "Dafydd James",
+        role: "Wales & British Lions",
+        title: "International Career & Selection Pressure",
+        episode: 3,
+        moments: 3,
+        keyInsight: "The pressure of international rugby forces clarity—you either perform or you're out. There's no hiding place at the highest level."
+      },
+      {
+        guest: "Willie Anderson",
+        role: "Ireland Captain & Ulster Legend",
+        title: "Leadership Under Fire & Identity",
+        episode: 4,
+        moments: 6,
+        keyInsight: "Growing up on a farm taught me values—you did a day's work and got paid for a day's work. You had to be honest, always truthful. You didn't do half a job, you did the job to the full."
+      },
+      {
+        guest: "Dick Best",
+        role: "England Coach & British Lions",
+        title: "Culture Setting & Strategic Leadership",
+        episode: 5,
+        moments: 5,
+        keyInsight: "Not everyone agreed with what I had to say, but it was enjoyable to have a voice. It's subjective—one person's point of view. But I am a professional sports coach. That's my panacea to success."
+      },
+      {
+        guest: "BJ Botha",
+        role: "South Africa & Ulster Rugby",
+        title: "World Cup Experience & Physical Demands",
+        episode: 6,
+        moments: 3,
+        keyInsight: "At the highest level, preparation is everything. The moments that define careers are built in training, not on the day."
+      },
+      {
+        guest: "Russell Earnshaw",
+        role: "Bath Rugby & Magic Academy Co-Founder",
+        title: "Coaching Innovation & Player Development",
+        episode: 7,
+        moments: 5,
+        keyInsight: "The Magic Academy teaches coaches and leaders how to lead for the benefit of employees or players. We've worked with Google, Great Britain Hockey—it's about creating environments where people thrive."
+      },
+      {
+        guest: "Tony Dalwood",
+        role: "Business Executive",
+        title: "Corporate Leadership & Strategic Decisions",
+        episode: 8,
+        moments: 4,
+        keyInsight: "Business decisions mirror sport—you need clarity, conviction, and the courage to act when others hesitate."
+      },
+      {
+        guest: "Archie White",
+        role: "Leadership & Business",
+        title: "Building High Performance Teams",
+        episode: 9,
+        moments: 3,
+        keyInsight: "Teams succeed when everyone understands their role and trusts the process. Confusion is the enemy of performance."
+      },
+      {
+        guest: "Dean Richards",
+        role: "England & British Lions, Leicester Tigers",
+        title: "Standards Into Silverware & Rebuilding Cultures",
+        episode: 10,
+        moments: 6,
+        keyInsight: "If you're a nice guy, you're a nice guy, and if you've got an edge, you'll always have an edge. That competitive DNA is in your genes—you have to win at all costs."
+      },
+      {
+        guest: "Bernard Jackman",
+        role: "Ireland Rugby & Head Coach",
+        title: "Coaching Philosophy & Player Development",
+        episode: 11,
+        moments: 4,
+        keyInsight: "The best coaches create environments where players take ownership. You can't drive standards from the outside—they have to come from within."
+      },
+      {
+        guest: "Al Charron",
+        role: "Canada Rugby Captain, World Rugby Hall of Fame",
+        title: "Leading Without Resources & Relentless Improvement",
+        episode: 12,
+        moments: 5,
+        keyInsight: "I never lost that mindset of having to prove myself. Every game you had to earn your place—you can't rest on your laurels."
+      },
+      {
+        guest: "Niall Woods",
+        role: "Ireland Rugby",
+        title: "International Pressure & Career Decisions",
+        episode: 13,
+        moments: 3,
+        keyInsight: "The decisions you make under pressure define your career. You learn more from the moments that test you than the ones that reward you."
+      },
+      {
+        guest: "Mark Evans",
+        role: "CEO Fijian Drua, Former Saracens & Harlequins",
+        title: "Governance, Resilience & Building Systems",
+        episode: 14,
+        moments: 5,
+        keyInsight: "From grassroots to governance, I've seen the sport at every level. The hard-won lessons on leadership, resilience and building systems that last—that's what transfers to business."
+      },
+      {
+        guest: "Andy Keast",
+        role: "British Lions Coach & London Irish Foundation CEO",
+        title: "Player Welfare & Community Impact",
+        episode: 15,
+        moments: 4,
+        keyInsight: "We use the power of sport, specifically rugby, to make a lasting difference in people's lives. That belief that sport can change lives still drives me today."
+      },
+      {
+        guest: "Brendan Fanning",
+        role: "Rugby Journalist & Author",
+        title: "Irish Rugby's Evolution & Leadership Culture",
+        episode: 16,
+        moments: 4,
+        keyInsight: "I've had a front row seat on Irish rugby's transformation over nearly three decades. The lessons it holds for rugby and leadership are invaluable."
+      },
+      {
+        guest: "Carlo Del Fava",
+        role: "Italy Rugby & Business Leader",
+        title: "Player Welfare & Life After Sport",
+        episode: 17,
+        moments: 4,
+        keyInsight: "Since retiring following concussion challenges, I've become an advocate for player welfare. I lead with the same toughness, clarity, and empathy I showed on the pitch."
+      },
+      {
+        guest: "Andy Gomarsall",
+        role: "England Rugby, 2003 World Cup Winner",
+        title: "Decision Rules & Recovery Design",
+        episode: 18,
+        moments: 5,
+        keyInsight: "Off the pitch, I bring the same clarity to business as an executive. The decision rules, selection standards and recovery design—if you lead teams or operate under pressure, these translate directly."
+      },
+      {
+        guest: "Ben Franks",
+        role: "All Blacks, Double World Cup Winner",
+        title: "Craft, Standards & Championship Mindset",
+        episode: 19,
+        moments: 5,
+        keyInsight: "I've just always been competitive. In New Zealand, rugby is king. In terms of what was the DNA that set me up for a professional career—it's just something inside me."
+      },
+      {
+        guest: "Dr Elin Haf Davies",
+        role: "Wales Rugby, Ocean Rower & Entrepreneur",
+        title: "Resilience & Leadership Under Extreme Pressure",
+        episode: 20,
+        moments: 6,
+        keyInsight: "I decided to row the Atlantic having never been to sea and never picked up an oar. Being on the farm led to a natural appetite for adventure. The appetite was always there—it just grew as I got older."
+      },
+      {
+        guest: "Mike Brown",
+        role: "England Rugby, 72 Caps",
+        title: "Intensity, Preparation & Competitive Standards",
+        episode: 21,
+        moments: 5,
+        keyInsight: "I became the benchmark for preparation and competitive standards. Now I'm shaping culture in business and sport as Director of High Performance."
+      },
+      {
+        guest: "Dr Stephen McIvor",
+        role: "Ireland & Munster, Sports Psychologist",
+        title: "Mental Toughness & Building Environments",
+        episode: 22,
+        moments: 6,
+        keyInsight: "I've spent three decades inside pressure—10 years as a player, 10 as a coach, 10 working with Olympians and executives. My doctorate explored mental toughness not as theory, but as lived practice."
+      },
+      {
+        guest: "Gareth Steenson",
+        role: "Exeter Chiefs & Ireland",
+        title: "Championship Winning Mentality",
+        episode: 23,
+        moments: 4,
+        keyInsight: "Winning cultures are built on daily standards, not grand gestures. It's what you do when no one's watching that counts."
+      },
+      {
+        guest: "Jamie Salmon",
+        role: "All Blacks & England Rugby",
+        title: "Crossing Borders & Attitude Over Ability",
+        episode: 24,
+        moments: 5,
+        keyInsight: "I learned very quickly in New Zealand that attitude will always be better than ability. The guys with the most ability tended to be lazy—the guys with attitude invariably went past them."
+      },
+      {
+        guest: "Kent Bray",
+        role: "Australia U21s, Oxford & Harlequins, City Director",
+        title: "Hidden Costs, Burnout & Identity Under Pressure",
+        episode: 25,
+        moments: 6,
+        keyInsight: "As rugby players, we're told you're never hurt, everything's under control, you're resilient, bulletproof. It's part of our nature never to invite discussion around mental health—it's seen as weakness. Reach out to someone. I could not be here today without help."
+      },
+      {
+        guest: "David Moffett",
+        role: "WRU CEO, NRL CEO & Sports Administrator",
+        title: "Governance & Organisational Transformation",
+        episode: 26,
+        moments: 6,
+        keyInsight: "I've been called a reformer, a disruptor and one of the most outspoken voices in sport. Some praise my tough calls, others say I'm too blunt—but nobody ignores me."
+      },
+      {
+        guest: "Glenn Delaney",
+        role: "Scarlets, Highlanders & Japan Rugby Head Coach",
+        title: "Culture Design & Bicultural Leadership",
+        episode: 29,
+        moments: 6,
+        keyInsight: "Being bicultural is better than being bilingual. If you go in and try to impose yourself, no one reflects well on that. Immerse yourself first in who these people are."
+      },
+      {
+        guest: "Rocky Clark MBE",
+        role: "England Rugby, Most Capped Front Row",
+        title: "Longevity, Standards & Guilt-Driven Performance",
+        episode: "Special",
+        moments: 7,
+        keyInsight: "The worst pressure was the pressure I put on myself. The ability to have the drive to keep working even though you think you're at the top—there's always more you can do."
+      }
+    ];
+
+    // ========================================
+    // DECISION STORAGE
+    // ========================================
+    let decisionHistory = JSON.parse(localStorage.getItem('pressureDecisions') || '[]');
+    let currentStake = 'medium';
+
+    // ========================================
+    // NAVIGATION
+    // ========================================
+    function showScreen(screenId) {
+      // Hide all screens
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      // Show target screen
+      document.getElementById('screen-' + screenId).classList.add('active');
+      // Update nav
+      document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+      document.querySelector(`nav a[data-nav="${screenId}"]`)?.classList.add('active');
+      // Scroll to top
+      window.scrollTo(0, 0);
+      
+      // Update dashboard if showing
+      if (screenId === 'dashboard') {
+        updateDashboard();
+      }
+    }
+
+    // ========================================
+    // HEADER SCROLL EFFECT
+    // ========================================
+    window.addEventListener('scroll', () => {
+      const header = document.getElementById('header');
+      if (window.scrollY > 50) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
+      }
+    });
+
+    // ========================================
+    // STAKE SELECTION
+    // ========================================
+    function setStake(stake) {
+      currentStake = stake;
+      document.querySelectorAll('.stake-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.stake === stake);
+      });
+    }
+
+    // ========================================
+    // DECISION FORM SUBMISSION
+    // ========================================
+    async function handleDecisionSubmit(e) {
+      e.preventDefault();
+      
+      const decisionText = document.getElementById('decisionText').value;
+      const timePressure = document.getElementById('timePressure').value;
+      const repPressure = document.getElementById('repPressure').value;
+      const context = document.getElementById('contextText').value;
+      
+      // Show loading
+      document.getElementById('loadingOverlay').classList.add('active');
+      
+      try {
+        const analysis = await generateAnalysis(decisionText, currentStake, timePressure, repPressure, context);
+        displayAnalysis(analysis);
+        saveDecision(decisionText, currentStake, analysis);
+        
+        document.getElementById('loadingOverlay').classList.remove('active');
+        document.getElementById('analysisResults').classList.add('active');
+        document.getElementById('analysisResults').scrollIntoView({ behavior: 'smooth' });
+      } catch (error) {
+        console.error('Analysis error:', error);
+        document.getElementById('loadingOverlay').classList.remove('active');
+        alert('There was an error generating your analysis. Please try again.');
+      }
+    }
+
+    // ========================================
+    // AI ANALYSIS - CLAUDE API
+    // ========================================
+    async function generateAnalysis(decision, stake, time, rep, context) {
+      // Build the podcast knowledge base for Claude
+      const podcastKnowledge = podcastDatabase.map(ep => 
+        `${ep.guest} (${ep.role}) - Episode ${ep.episode}: "${ep.title}" - Key insight: "${ep.keyInsight}"`
+      ).join('\n');
+      
+      const prompt = `You are an expert leadership analyst for "PRESSURE by The Business End" - a platform that analyses high-stakes business decisions by matching them against judgment calls from elite sport leaders.
+
+PODCAST DATABASE - These are real quotes and insights from The Business End podcast guests:
+${podcastKnowledge}
+
+USER'S DECISION TO ANALYSE:
+Decision: ${decision}
+Stakes: ${stake}
+Time pressure: ${time ? 'Yes' : 'No'}
+Reputation at risk: ${rep ? 'Yes' : 'No'}
+Additional context: ${context || 'None provided'}
+
+Analyse this decision and respond with ONLY a valid JSON object (no markdown, no explanation) in this exact format:
+{
+  "call": "DO" or "DONT" or "DELAY",
+  "reasoning": "Brief explanation of why this recommendation (1-2 sentences)",
+  "leaderName": "Name of the most relevant podcast guest to match with",
+  "leaderRole": "Their role/title from the database",
+  "matchScore": number between 70-95,
+  "quote": "A relevant quote from that leader (use their actual keyInsight or paraphrase appropriately)",
+  "signal": "Specific pressure analysis for this decision (2-3 sentences about what pressures are at play)",
+  "risk": "The hidden cost or system risk of inaction or wrong action (1-2 sentences with specific implications)",
+  "context": "How the matched leader's experience relates to this specific decision (2-3 sentences)",
+  "action": "Three specific, actionable steps numbered 1. 2. 3. tailored to this decision",
+  "biasName": "Name of likely cognitive bias (e.g. SUNK COST, EGO PROTECTION, GUILT-DRIVEN DELAY, REPUTATION AVOIDANCE, STANDARDS EROSION)",
+  "biasText": "Explanation of how this bias might be affecting the decision (1-2 sentences)"
+}
+
+Be specific to the actual decision described. Match with the most relevant leader based on the situation type. Provide genuinely useful analysis.`;
+
+      const response = await fetch('/.netlify/functions/analyse', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          decision: decision,
+          stake: stake,
+          time: time,
+          rep: rep,
+          context: context,
+          podcastKnowledge: podcastKnowledge
+        })
+      });
+
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Analysis failed');
+      }
+      
+      const analysis = data;
+      
+      return {
+        call: analysis.call,
+        leader: { 
+          name: analysis.leaderName, 
+          role: analysis.leaderRole, 
+          score: analysis.matchScore 
+        },
+        quote: analysis.quote,
+        signal: analysis.signal,
+        risk: analysis.risk,
+        context: analysis.context,
+        action: analysis.action,
+        bias: { 
+          name: analysis.biasName, 
+          text: analysis.biasText 
+        },
+        pressureTypes: [time ? 'time' : null, rep ? 'reputation' : null, 'decision'].filter(Boolean)
+      };
+    }
+
+    // ========================================
+    // DISPLAY ANALYSIS
+    // ========================================
+    function displayAnalysis(analysis) {
+      // Update call badge
+      const badge = document.getElementById('callBadge');
+      badge.className = 'call-badge ' + analysis.call.toLowerCase();
+      document.getElementById('callText').textContent = analysis.call === 'DONT' ? "DON'T" : analysis.call;
+      
+      // Update cards
+      document.getElementById('signalText').textContent = analysis.signal;
+      document.getElementById('riskText').textContent = analysis.risk;
+      document.getElementById('matchLeader').textContent = analysis.leader.name;
+      document.getElementById('matchRole').textContent = analysis.leader.role;
+      document.getElementById('matchScore').textContent = analysis.leader.score + '%';
+      document.getElementById('matchQuote').textContent = analysis.quote;
+      document.getElementById('matchContext').textContent = analysis.context;
+      document.getElementById('actionText').textContent = analysis.action;
+      document.getElementById('biasText').textContent = analysis.bias.text;
+      document.querySelector('.bias-content h4').textContent = 'BIAS DETECTED: ' + analysis.bias.name;
+    }
+
+    // ========================================
+    // SAVE DECISION
+    // ========================================
+    function saveDecision(text, stake, analysis) {
+      const decision = {
+        id: Date.now(),
+        text: text.substring(0, 100) + (text.length > 100 ? '...' : ''),
+        stake: stake,
+        call: analysis.call,
+        leader: analysis.leader.name,
+        score: analysis.leader.score,
+        pressureTypes: analysis.pressureTypes,
+        timestamp: new Date().toISOString()
+      };
+      
+      decisionHistory.unshift(decision);
+      localStorage.setItem('pressureDecisions', JSON.stringify(decisionHistory));
+    }
+
+    // ========================================
+    // UPDATE DASHBOARD
+    // ========================================
+    function updateDashboard() {
+      // Stats
+      document.getElementById('totalDecisions').textContent = decisionHistory.length;
+      
+      if (decisionHistory.length > 0) {
+        const avgScore = Math.round(decisionHistory.reduce((a, d) => a + d.score, 0) / decisionHistory.length);
+        document.getElementById('avgMatch').textContent = avgScore + '%';
+        
+        // Most matched leader
+        const leaderCounts = {};
+        decisionHistory.forEach(d => {
+          leaderCounts[d.leader] = (leaderCounts[d.leader] || 0) + 1;
+        });
+        const topLeader = Object.entries(leaderCounts).sort((a, b) => b[1] - a[1])[0];
+        document.getElementById('topLeader').textContent = topLeader ? topLeader[0].split(' ')[1] : '—';
+        
+        // Pressure type distribution
+        const pressureCounts = { time: 0, reputation: 0, stakeholder: 0, resource: 0 };
+        let totalPressure = 0;
+        decisionHistory.forEach(d => {
+          d.pressureTypes?.forEach(p => {
+            pressureCounts[p]++;
+            totalPressure++;
+          });
+        });
+        
+        const dominantType = Object.entries(pressureCounts).sort((a, b) => b[1] - a[1])[0];
+        document.getElementById('dominantPressure').textContent = dominantType ? dominantType[0].charAt(0).toUpperCase() + dominantType[0].slice(1) : '—';
+        
+        // Update bars
+        Object.keys(pressureCounts).forEach(type => {
+          const percent = totalPressure > 0 ? Math.round((pressureCounts[type] / totalPressure) * 100) : 0;
+          document.getElementById('bar-' + type).style.width = percent + '%';
+          document.getElementById('val-' + type).textContent = percent + '%';
+        });
+        
+        // History list
+        const historyHtml = decisionHistory.map(d => `
+          <div class="history-item">
+            <div class="history-decision">${d.text}</div>
+            <div class="history-stake ${d.stake}">${d.stake.toUpperCase()}</div>
+            <div class="history-call ${d.call.toLowerCase()}">${d.call === 'DONT' ? "DON'T" : d.call}</div>
+            <button class="history-delete" onclick="deleteDecision(${d.id})">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+              </svg>
+            </button>
+          </div>
+        `).join('');
+        document.getElementById('historyList').innerHTML = historyHtml || '<div class="history-item" style="justify-content: center; color: var(--white-dim);">No decisions analysed yet.</div>';
+      }
+    }
+
+    // ========================================
+    // DELETE DECISION
+    // ========================================
+    function deleteDecision(id) {
+      decisionHistory = decisionHistory.filter(d => d.id !== id);
+      localStorage.setItem('pressureDecisions', JSON.stringify(decisionHistory));
+      updateDashboard();
+    }
+
+    // ========================================
+    // RESET ANALYSIS
+    // ========================================
+    function resetAnalysis() {
+      document.getElementById('analysisResults').classList.remove('active');
+      document.getElementById('decisionForm').reset();
+      setStake('medium');
+      document.getElementById('decision-input').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // ========================================
+    // EMAIL MODAL
+    // ========================================
+    function openEmailModal() {
+      document.getElementById('emailModal').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeEmailModal() {
+      document.getElementById('emailModal').classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    function handleEmailSubmit(e) {
+      e.preventDefault();
+      const form = e.target;
+      const formData = new FormData(form);
+      const submitBtn = form.querySelector('button[type="submit"]');
+      const originalText = submitBtn.innerHTML;
+      
+      // Show loading state
+      submitBtn.innerHTML = '<span>Sending...</span>';
+      submitBtn.disabled = true;
+      
+      fetch(form.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Accept': 'application/json'
+        }
+      })
+      .then(response => {
+        if (response.ok) {
+          alert('Thank you! Your Intelligence Report request has been received. We\'ll be in touch shortly.');
+          form.reset();
+          closeEmailModal();
+        } else {
+          throw new Error('Form submission failed');
+        }
+      })
+      .catch(error => {
+        alert('There was an error submitting the form. Please try again or email us directly.');
+      })
+      .finally(() => {
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+      });
+    }
+
+    // Close modal on overlay click
+    document.getElementById('emailModal').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('emailModal')) {
+        closeEmailModal();
+      }
+    });
+
+    // ========================================
+    // POPULATE PODCAST GRID
+    // ========================================
+    function populatePodcastGrid() {
+      const grid = document.getElementById('podcastGrid');
+      grid.innerHTML = podcastDatabase.map(ep => `
+        <div class="podcast-card">
+          <div class="podcast-episode">Episode ${ep.episode}</div>
+          <div class="podcast-guest">${ep.guest}</div>
+          <div class="podcast-role">${ep.role}</div>
+          <div class="podcast-title">${ep.title}</div>
+          <div class="podcast-insight">"${ep.keyInsight.substring(0, 120)}${ep.keyInsight.length > 120 ? '...' : ''}"</div>
+          <div class="podcast-moments"><span>${ep.moments}</span> decision moments extracted</div>
+        </div>
+      `).join('');
+    }
+
+    // ========================================
+    // PDF DOWNLOAD
+    // ========================================
+    function downloadPDF() {
+      // Get the analysis data
+      const call = document.getElementById('callText').textContent;
+      const signal = document.getElementById('signalText').textContent;
+      const risk = document.getElementById('riskText').textContent;
+      const leader = document.getElementById('matchLeader').textContent;
+      const role = document.getElementById('matchRole').textContent;
+      const score = document.getElementById('matchScore').textContent;
+      const quote = document.getElementById('matchQuote').textContent;
+      const context = document.getElementById('matchContext').textContent;
+      const action = document.getElementById('actionText').textContent;
+      const biasTitle = document.querySelector('.bias-content h4').textContent;
+      const biasText = document.getElementById('biasText').textContent;
+      const decisionText = document.getElementById('decisionText').value;
+      const date = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+      
+      const recClass = call === "DO" ? "do" : call === "DON'T" ? "dont" : "delay";
+
+      // Create a new window with printable content
+      const printWindow = window.open('', '_blank');
+      printWindow.document.write(`<!DOCTYPE html>
+<html>
+<head>
+  <title>PRESSURE Intelligence Report</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Helvetica, Arial, sans-serif; color: #1a1a1a; line-height: 1.5; }
+    .header { background: #000; padding: 24px 32px; }
+    .header-inner { border: 2px solid #fff; padding: 20px; text-align: center; }
+    .header h1 { font-size: 28px; letter-spacing: 2px; font-weight: bold; color: #c9a227; margin: 0 0 6px 0; }
+    .header p { font-size: 10px; color: #fff; letter-spacing: 3px; margin: 0; }
+    .title-bar { background: #c9a227; color: #000; padding: 12px 32px; text-align: center; }
+    .title-bar p { font-size: 10px; letter-spacing: 2px; font-weight: bold; margin: 0; }
+    .content { padding: 32px; }
+    .decision-box { background: #f5f5f5; padding: 20px; margin-bottom: 24px; border-left: 4px solid #c9a227; }
+    .label { font-size: 9px; text-transform: uppercase; letter-spacing: 2px; color: #888; margin-bottom: 8px; font-weight: bold; }
+    .decision-box p { font-size: 13px; color: #333; }
+    .recommendation { text-align: center; margin: 32px 0; padding: 32px; border: 2px solid #ccc; }
+    .recommendation.do { background: #e8f5e9; border-color: #4caf50; }
+    .recommendation.dont { background: #ffebee; border-color: #f44336; }
+    .recommendation.delay { background: #fff8e1; border-color: #ffc107; }
+    .recommendation .label { color: #666; }
+    .recommendation h2 { font-size: 48px; font-weight: bold; margin: 8px 0 0 0; }
+    .recommendation.do h2 { color: #2e7d32; }
+    .recommendation.dont h2 { color: #c62828; }
+    .recommendation.delay h2 { color: #f9a825; }
+    .two-col { margin-bottom: 24px; }
+    .two-col::after { content: ""; display: table; clear: both; }
+    .col { width: 48%; float: left; padding: 16px; background: #fafafa; border-top: 3px solid #c9a227; }
+    .col:last-child { float: right; }
+    .col .label { color: #c9a227; }
+    .col p { font-size: 12px; color: #444; }
+    .match-box { background: #1a1a1a; color: #fff; padding: 24px; margin-bottom: 24px; }
+    .match-header { margin-bottom: 16px; }
+    .match-header .label { color: #c9a227; display: inline-block; }
+    .match-header .score { float: right; font-size: 20px; font-weight: bold; color: #c9a227; }
+    .match-box h4 { font-size: 18px; margin: 0 0 4px 0; }
+    .match-box .role { font-size: 10px; color: #c9a227; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 16px; }
+    .match-box blockquote { padding-left: 16px; border-left: 3px solid #c9a227; font-style: italic; color: #ddd; margin: 0 0 12px 0; font-size: 13px; }
+    .match-box .context { font-size: 11px; color: #999; }
+    .actions-box { margin-bottom: 24px; padding: 20px; border: 1px solid #ddd; }
+    .actions-box .label { color: #c9a227; }
+    .actions-box p { font-size: 13px; }
+    .bias-box { background: #fff8e1; padding: 20px; border-left: 4px solid #ff8f00; margin-bottom: 24px; }
+    .bias-box .label { color: #ff8f00; }
+    .bias-box p { font-size: 12px; color: #5d4037; }
+    .footer { background: #000; padding: 20px 32px; }
+    .footer-inner { border: 1px solid #fff; padding: 12px; text-align: center; }
+    .footer h4 { font-size: 12px; color: #c9a227; letter-spacing: 2px; font-weight: bold; margin: 0 0 4px 0; }
+    .footer p { font-size: 9px; color: #fff; letter-spacing: 1px; margin: 0; }
+    .footer .tagline { font-size: 8px; color: #666; text-align: center; margin-top: 12px; }
+    @media print { 
+      body { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+      .header, .title-bar, .match-box, .footer { -webkit-print-color-adjust: exact !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-inner">
+      <h1>THE BUSINESS END</h1>
+      <p>BUSINESS-END.COM</p>
+    </div>
+  </div>
+  
+  <div class="title-bar">
+    <p>PRESSURE · LEADERSHIP INTELLIGENCE REPORT · ${date.toUpperCase()}</p>
+  </div>
+
+  <div class="content">
+    <div class="decision-box">
+      <div class="label">The Decision Under Analysis</div>
+      <p>${decisionText}</p>
+    </div>
+
+    <div class="recommendation ${recClass}">
+      <div class="label">Our Recommendation</div>
+      <h2>${call}</h2>
+    </div>
+
+    <div class="two-col">
+      <div class="col">
+        <div class="label">Pressure Signal</div>
+        <p>${signal}</p>
+      </div>
+      <div class="col">
+        <div class="label">System Risk</div>
+        <p>${risk}</p>
+      </div>
+    </div>
+
+    <div class="match-box">
+      <div class="match-header">
+        <div class="label">Pattern Match</div>
+        <span class="score">${score}</span>
+      </div>
+      <h4>${leader}</h4>
+      <div class="role">${role}</div>
+      <blockquote>"${quote}"</blockquote>
+      <div class="context">${context}</div>
+    </div>
+
+    <div class="actions-box">
+      <div class="label">Non-Negotiable Actions</div>
+      <p>${action}</p>
+    </div>
+
+    <div class="bias-box">
+      <div class="label">⚠ ${biasTitle}</div>
+      <p>${biasText}</p>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-inner">
+      <h4>THE BUSINESS END</h4>
+      <p>BUSINESS-END.COM</p>
+    </div>
+    <div class="tagline">Leadership intelligence where judgment calls are tested.</div>
+  </div>
+
+  <script>
+    window.onload = function() { setTimeout(function() { window.print(); }, 250); }
+  <\/script>
+</body>
+</html>`);
+      printWindow.document.close();
+    }
+
+    // ========================================
+    // INIT
+    // ========================================
+    populatePodcastGrid();
+    updateDashboard();
+  </script>
+</body>
+</html>
